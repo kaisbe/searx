@@ -44,6 +44,20 @@ class RawTextQuery(object):
         self.engines = []
         self.languages = []
         self.specific = False
+        
+    def _parse_requested_file_format(self, query_part):
+        is_matching = False
+        for match in re.finditer(r'fileformat\s*\:\s*[a-z]{2,4}', query_part):
+            if match.group(0) == query_part:
+                is_matching = True
+                break
+        if is_matching:
+            query_part = query_part.strip()
+            format = None
+            for match in re.finditer(r'[a-z]{2,4}(?<=(fileformat\:))', query_part):
+                format = match.group(0)
+                break
+            return format
 
     # parse query, if tags are set, which
     # change the serch engine or search-language
